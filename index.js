@@ -33,6 +33,7 @@ async function run() {
 
     const database = client.db("communityDB");
     const users = database.collection("users");
+    const challenges = database.collection("challenges");
     //  jwt
     app.post("/jwt", async (req, res) => {
       const user = req.body;
@@ -72,6 +73,14 @@ async function run() {
       const result = await users.insertOne(user);
       res.send(result);
     });
+    // challenges
+
+    app.post("/challenges", verifyToken, async (req, res) => {
+      const challenge = req.body;
+      const result = await challenges.insertOne(challenge);
+      res.send(result);
+    });
+
     //  send a ping for connection
     await client.db("admin").command({ ping: 1 });
     console.log("Connection successful");
