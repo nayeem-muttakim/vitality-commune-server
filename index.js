@@ -74,6 +74,21 @@ async function run() {
       res.send(result);
     });
     // challenges
+    app.get("/challenges", async (req, res) => {
+      const result = await challenges
+        .find()
+        .project({
+          _id: 0,
+          title: 1,
+
+          type: 1,
+          banner: 1,
+          description: 1,
+        })
+        .toArray();
+
+      res.send(result);
+    });
 
     app.post("/challenges", verifyToken, async (req, res) => {
       const challenge = req.body;
