@@ -2,7 +2,7 @@ const express = require("express");
 
 const cors = require("cors");
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 require("dotenv").config();
 
@@ -34,6 +34,7 @@ async function run() {
     const database = client.db("communityDB");
     const users = database.collection("users");
     const challenges = database.collection("challenges");
+    const participations = database.collection("participations");
     //  jwt
     app.post("/jwt", async (req, res) => {
       const user = req.body;
@@ -100,7 +101,21 @@ async function run() {
       const result = await challenges.insertOne(challenge);
       res.send(result);
     });
+    // participation
+    app.post("/participations", verifyToken, async (req, res) => {
+      const participation = req.body;
+      const result = await participations.insertOne(participation);
+      res.send(result);
+    });
+    app.get("/participations/mine", verifyToken, async (req, res) => {
+      let query = {};
+      if (req.query?.participant) {
+        query = { participant: req.query.participant };
+      }
+      const result = await participations.find(query).toArray();
 
+      res.send(result);
+    });
     //  send a ping for connection
     await client.db("admin").command({ ping: 1 });
     console.log("Connection successful");
