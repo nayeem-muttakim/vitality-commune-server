@@ -75,21 +75,26 @@ async function run() {
     });
     // challenges
     app.get("/challenges", async (req, res) => {
-      const result = await challenges
-        .find()
-        .project({
-          _id: 0,
-          title: 1,
-
-          type: 1,
-          banner: 1,
-          description: 1,
-        })
-        .toArray();
+      const result = await challenges.find().toArray();
 
       res.send(result);
     });
 
+    app.get("/challenge/:id", verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await challenges.findOne(filter);
+      res.send(result);
+    });
+    app.get("/challenges/mine", verifyToken, async (req, res) => {
+      let query = {};
+      if (req.query?.host) {
+        query = { host: req.query.host };
+      }
+      const result = await challenges.find(query).toArray();
+
+      res.send(result);
+    });
     app.post("/challenges", verifyToken, async (req, res) => {
       const challenge = req.body;
       const result = await challenges.insertOne(challenge);
