@@ -12,7 +12,15 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors());
+// keep updated this
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://vitality-commune.vercel.app"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 const port = process.env.PORT || 3001;
 
